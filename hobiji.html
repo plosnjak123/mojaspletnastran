@@ -1,0 +1,154 @@
+```html
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moji hobiji | Jakob Plošnik</title>
+
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+ margin:0;font-family:Arial,sans-serif;line-height:1.7;
+ color:#edf7ff;background:#172d46;
+}
+header{
+ background:#203c59;padding:20px;
+ border-bottom:1px solid #547895;
+ position:sticky;top:0;z-index:10;
+}
+nav{display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
+a{color:#a9e3ff;text-decoration:none}
+nav a{color:#f0f7ff;transition:.3s}
+nav a:hover{color:#8be0ff}
+.hero{
+ padding:75px 20px;text-align:center;
+ background:linear-gradient(135deg,#294e70,#416b8c,#243d5c);
+ border-bottom:1px solid #7194b2;
+}
+.hero p{color:#d2eaff}
+h1{font-size:clamp(36px,6vw,60px);margin:0}
+h1 span{color:#a8e6ff}
+main{max-width:1050px;margin:auto;padding:40px 20px}
+.intro{text-align:center;color:#d0e3f3;margin-bottom:40px}
+.hobby{
+ display:grid;grid-template-columns:1fr 1fr;gap:30px;
+ align-items:center;margin:30px 0 45px;
+ background:#203b57;border:1px solid #476987;
+ padding:22px;border-radius:20px;
+ box-shadow:0 12px 30px #11263b55;
+ transition:.3s;
+}
+.hobby:hover{transform:translateY(-5px);border-color:#a0ddff}
+.hobby img{
+ width:100%;height:290px;object-fit:cover;
+ border-radius:14px;display:block;
+}
+h2{color:#a8e6ff;margin-top:0}
+.hobby p{color:#d4e4f2}
+.tag{
+ display:inline-block;background:#345875;color:#d8f3ff;
+ padding:6px 12px;border-radius:20px;font-size:12px;
+ margin-bottom:12px;
+}
+button{
+ background:#9bdfff;color:#17334d;border:0;
+ padding:13px 22px;border-radius:10px;
+ cursor:pointer;font-weight:bold;transition:.3s;
+}
+button:hover{background:#d3f2ff;transform:scale(1.03)}
+.back{text-align:center;margin:45px 0}
+footer{
+ text-align:center;padding:25px;
+ background:#203c59;color:#c6d9e9;
+ border-top:1px solid #547895;
+}
+@media(max-width:700px){
+ .hobby{grid-template-columns:1fr}
+ .hobby img{height:240px}
+ .hero{padding:55px 15px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<nav>
+<a href="index.html">DOMOV</a>
+<a href="osradlje.html">OŠ RADLJE</a>
+<a href="maskota.html">MASKOTA</a>
+<a href="dejavnosti.html">DEJAVNOSTI</a>
+<a href="hobiji.html">MOJI HOBIJI</a>
+<a href="trumpsim.html">IGRAJ IGRO</a>
+</nav>
+</header>
+
+<section class="hero">
+<p>ZIMSKI VZDUŠJE • GLASBA • PROSTI ČAS</p>
+<h1>Moji <span>hobiji</span></h1>
+<p>Dva hobija, ki mi polepšata vsakdan.</p>
+</section>
+
+<main>
+
+<p class="intro">
+Dobrodošel v mojem glasbenem kotičku!
+Spoznaj mojo zbirko vinilk in glasbo,
+ki jo rad poslušam v prostem času.
+</p>
+
+<div class="hobby">
+
+<a href="https://www.discogs.com/" target="_blank" rel="noopener">
+<img src="https://images.unsplash.com/photo-1603048588665-791ca8aea617?auto=format&fit=crop&w=700&q=80"
+alt="Zbirka vinilnih plošč">
+</a>
+
+<div>
+<span class="tag">MOJA ZBIRKA</span>
+<h2>Zbiranje vinilk</h2>
+<p>Eden izmed mojih hobijev je zbiranje vinilk. Všeč so mi njihov poseben videz, ovitki in občutek, da imam glasbo tudi v fizični obliki.</p>
+<p>Rad odkrivam različne izvajalce, albume in posebne izdaje ter postopoma dopolnjujem svojo zbirko.</p>
+<a href="https://www.discogs.com/" target="_blank" rel="noopener">
+<button>RAZIŠČI VINILKE ↗</button>
+</a>
+</div>
+
+</div>
+
+<div class="hobby">
+
+<a href="https://open.spotify.com/" target="_blank" rel="noopener">
+<img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=700&q=80"
+alt="Slušalke za poslušanje glasbe">
+</a>
+
+<div>
+<span class="tag">MOJ GLASBENI SVET</span>
+<h2>Poslušanje glasbe</h2>
+<p>Glasbo rad poslušam v prostem času. Izbiram različne izvajalce in glasbene zvrsti glede na svoje razpoloženje.</p>
+<p>Glasba me lahko sprosti, zabava ali mi izboljša dan. Rad odkrivam nove pesmi in poslušam tudi albume na vinilkah.</p>
+<a href="https://open.spotify.com/" target="_blank" rel="noopener">
+<button>ODPRI SPOTIFY ↗</button>
+</a>
+</div>
+
+</div>
+
+<div class="back">
+<a href="index.html">
+<button>← NAZAJ NA ZAČETNO STRAN</button>
+</a>
+</div>
+
+</main>
+
+<footer>
+© 2026 Jakob Plošnik | Moji hobiji
+</footer>
+
+</body>
+</html>
+```

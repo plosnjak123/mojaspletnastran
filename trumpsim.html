@@ -1,0 +1,1582 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Border Control: Presidential Simulator</title>
+
+<style>
+:root {
+  --bg: #07111e;
+  --panel: #101f30;
+  --panel2: #172a40;
+  --line: #30465f;
+  --gold: #e3bd70;
+  --red: #d84b52;
+  --green: #43c59e;
+  --blue: #4b91e2;
+  --text: #f1f5fb;
+  --muted: #9aacc1;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(ellipse at top, #142944 0%, transparent 55%),
+    var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button, input, select {
+  font: inherit;
+}
+
+button {
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--panel2);
+  color: var(--text);
+  padding: 11px 15px;
+  cursor: pointer;
+  transition: .18s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold);
+  filter: brightness(1.15);
+}
+
+button:active { transform: scale(.98); }
+
+button:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.primary {
+  background: var(--gold);
+  color: #10151b;
+  border-color: var(--gold);
+  font-weight: bold;
+}
+
+.danger {
+  background: #59252c;
+  border-color: #a9434c;
+}
+
+.success {
+  background: #123f38;
+  border-color: #277c6c;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(7,17,30,.94);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+}
+
+.header-inner {
+  max-width: 1450px;
+  margin: auto;
+  padding: 15px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.brand span { color: var(--gold); }
+
+.header-info {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.layout {
+  max-width: 1450px;
+  margin: auto;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 22px;
+}
+
+.sidebar {
+  align-self: start;
+  position: sticky;
+  top: 90px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.nav-btn {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 5px;
+  background: transparent;
+  border-color: transparent;
+}
+
+.nav-btn.active {
+  background: #253b53;
+  border-color: #3c5875;
+  color: var(--gold);
+}
+
+.sidebar-label {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 1.4px;
+  margin: 17px 10px 8px;
+  text-transform: uppercase;
+}
+
+main { min-width: 0; }
+
+.page { display: none; animation: appear .3s ease; }
+.page.active { display: block; }
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+h1 { font-size: clamp(26px, 4vw, 38px); margin: 0 0 8px; }
+h2 { font-size: 20px; margin: 0 0 14px; }
+h3 { font-size: 16px; margin: 0 0 10px; }
+
+.subtitle { color: var(--muted); line-height: 1.6; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 13px;
+  margin: 22px 0;
+}
+
+.card {
+  background: linear-gradient(145deg, var(--panel2), var(--panel));
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  padding: 18px;
+  min-width: 0;
+}
+
+.metric-label {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+}
+
+.metric {
+  font-size: 25px;
+  font-weight: 900;
+  margin: 10px 0 5px;
+  overflow-wrap: anywhere;
+}
+
+.metric-note { color: var(--muted); font-size: 12px; }
+
+.two-col {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.stack { display: grid; gap: 15px; }
+
+.gold { color: var(--gold); }
+.red { color: var(--red); }
+.green { color: var(--green); }
+.muted { color: var(--muted); }
+
+.pill {
+  display: inline-block;
+  border: 1px solid var(--line);
+  background: #0b1725;
+  padding: 5px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.progress {
+  height: 7px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #26364a;
+  margin-top: 9px;
+}
+
+.progress > div {
+  height: 100%;
+  width: 50%;
+  border-radius: 20px;
+  background: var(--green);
+  transition: width .4s;
+}
+
+.actions {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+  margin-top: 13px;
+}
+
+.dialogue {
+  display: grid;
+  grid-template-columns: 112px minmax(0,1fr);
+  gap: 18px;
+  background: linear-gradient(135deg, #192e46, #101c2b);
+  border: 1px solid #536780;
+  border-radius: 16px;
+  padding: 21px;
+  margin: 20px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.portrait {
+  width: 108px;
+  height: 132px;
+  border-radius: 12px;
+  background: linear-gradient(160deg, #243e5b, #101724);
+  border: 1px solid #536780;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 65px;
+  position: relative;
+}
+
+.portrait:after {
+  content: "PRESIDENT";
+  position: absolute;
+  bottom: 8px;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--gold);
+}
+
+.speaker {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--gold);
+  font-weight: bold;
+  margin-bottom: 9px;
+}
+
+.quote {
+  font-size: 17px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.mission-list {
+  display: grid;
+  gap: 9px;
+  margin-top: 15px;
+}
+
+.mission {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: #0b1826;
+  border: 1px solid var(--line);
+  padding: 11px;
+  border-radius: 9px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.mission.done { opacity: .6; }
+.mission.done .check { color: var(--green); }
+
+.check {
+  color: var(--gold);
+  font-weight: bold;
+}
+
+.person {
+  display: grid;
+  grid-template-columns: 70px minmax(0,1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.person-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
+  background: #243b54;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 33px;
+}
+
+.person-name { font-size: 22px; font-weight: 900; margin-bottom: 6px; }
+
+.details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 8px;
+  margin-top: 17px;
+}
+
+.detail {
+  padding: 10px;
+  background: #0a1725;
+  border: 1px solid #24374c;
+  border-radius: 8px;
+}
+
+.detail small {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.detail strong { font-size: 13px; }
+
+.case-note {
+  margin-top: 14px;
+  padding: 12px;
+  background: #0a1725;
+  border-left: 3px solid var(--gold);
+  color: #c5d2e0;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.slider-row { margin: 20px 0; }
+
+.slider-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--gold);
+}
+
+input[type="number"], select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #0a1725;
+  color: var(--text);
+}
+
+.event {
+  padding: 13px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #0a1725;
+  margin: 9px 0;
+}
+
+.event strong { display: block; margin-bottom: 5px; }
+.event p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+.log-list {
+  display: grid;
+  gap: 8px;
+  max-height: 520px;
+  overflow: auto;
+}
+
+.log-item {
+  border-left: 3px solid var(--blue);
+  padding: 10px 12px;
+  background: #0a1725;
+  border-radius: 0 8px 8px 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.log-item small { display: block; color: var(--muted); margin-bottom: 4px; }
+
+.notice {
+  border: 1px solid #665a39;
+  background: #292516;
+  color: #e7d6a8;
+  padding: 12px;
+  border-radius: 9px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 13px 0;
+}
+
+.toast {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  z-index: 50;
+  max-width: 350px;
+  background: #182b40;
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: 14px 18px;
+  box-shadow: 0 12px 40px #0008;
+  animation: appear .2s ease;
+}
+
+footer {
+  text-align: center;
+  color: #65778c;
+  font-size: 11px;
+  padding: 28px;
+}
+
+@media(max-width: 950px) {
+  .layout { grid-template-columns: 1fr; padding: 15px; }
+  .sidebar { position: static; display: flex; flex-wrap: wrap; gap: 5px; }
+  .sidebar-label { width: 100%; }
+  .nav-btn { width: auto; margin: 0; }
+  .grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+
+@media(max-width: 620px) {
+  .two-col { grid-template-columns: 1fr; }
+  .dialogue { grid-template-columns: 72px minmax(0,1fr); padding: 14px; gap: 12px; }
+  .portrait { width: 70px; height: 90px; font-size: 42px; }
+  .quote { font-size: 14px; }
+  .details { grid-template-columns: 1fr 1fr; }
+  .metric { font-size: 21px; }
+  .header-inner { padding: 12px; }
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="header-inner">
+    <div class="brand">BORDER CONTROL <span>///</span> PRESIDENTIAL SIMULATOR</div>
+    <div class="header-info">
+      <span id="headerDay">DAY 1</span>
+      <span class="pill" id="headerStatus">GOVERNMENT ACTIVE</span>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-label">Presidential Office</div>
+    <button class="nav-btn active" data-page="dashboard">▦ Dashboard</button>
+    <button class="nav-btn" data-page="briefing">▣ Daily Briefing</button>
+
+    <div class="sidebar-label">Government</div>
+    <button class="nav-btn" data-page="border">▤ Border Control</button>
+    <button class="nav-btn" data-page="finance">▥ Finance & Debt</button>
+    <button class="nav-btn" data-page="trade">⇄ Taxes & Tariffs</button>
+    <button class="nav-btn" data-page="events">⚑ National Events</button>
+
+    <div class="sidebar-label">Records</div>
+    <button class="nav-btn" data-page="log">☷ Decision Log</button>
+    <button class="nav-btn" id="saveButton">▣ Save Game</button>
+    <button class="nav-btn" id="resetButton">↻ New Game</button>
+
+    <div class="card" style="margin-top:15px;padding:13px">
+      <div class="metric-label">Days in office</div>
+      <div class="metric" id="sideDay">1</div>
+      <div class="metric-note">Your presidency is ongoing.</div>
+    </div>
+  </aside>
+
+  <main>
+    <!-- DASHBOARD -->
+    <section class="page active" id="dashboard">
+      <h1>Presidential Dashboard</h1>
+      <div class="subtitle">Manage the country, make decisions and deal with the consequences.</div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="metric-label">Treasury</div>
+          <div class="metric gold" id="moneyMetric">$120B</div>
+          <div class="metric-note">Available government funds</div>
+        </div>
+        <div class="card">
+          <div class="metric-label">National debt</div>
+          <div class="metric red" id="debtMetric">$850B</div>
+          <div class="metric-note">Outstanding obligations</div>
+        </div>
+        <div class="card">
+          <div class="metric-label">Public approval</div>
+          <div class="metric" id="approvalMetric">55%</div>
+          <div class="progress"><div id="approvalBar"></div></div>
+        </div>
+        <div class="card">
+          <div class="metric-label">Economy</div>
+          <div class="metric" id="economyMetric">62/100</div>
+          <div class="progress"><div id="economyBar"></div></div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="stack">
+          <div class="card">
+            <h2>Today's Presidential Briefing</h2>
+            <div class="subtitle" id="dashboardBriefing">The president is preparing the morning briefing.</div>
+            <div class="actions">
+              <button class="primary" onclick="showPage('briefing')">Hear Trump speak →</button>
+            </div>
+          </div>
+          <div class="card">
+            <h2>Current objectives</h2>
+            <div id="dashboardMissions" class="mission-list"></div>
+          </div>
+        </div>
+
+        <div class="stack">
+          <div class="card">
+            <h2>Today's national situation</h2>
+            <div id="dashboardEvents"></div>
+          </div>
+          <div class="card">
+            <h2>Advance the calendar</h2>
+            <p class="subtitle">Finish your decisions for today and start the next day. The next briefing will have new objectives.</p>
+            <button class="primary" onclick="nextDay()">END DAY & CONTINUE →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BRIEFING -->
+    <section class="page" id="briefing">
+      <h1>Daily Presidential Briefing</h1>
+      <div class="subtitle">Every morning, the president tells you what is happening and what you can do.</div>
+
+      <div class="dialogue">
+        <div class="portrait">🇺🇸</div>
+        <div>
+          <div class="speaker">PRESIDENT DONALD J. TRUMP — DAY <span id="briefingDay">1</span></div>
+          <p class="quote" id="trumpQuote"></p>
+          <div class="actions">
+            <button class="primary" onclick="readBriefingAgain()">REPEAT BRIEFING</button>
+            <button onclick="showPage('dashboard')">BACK TO DASHBOARD</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <h2>Today's orders</h2>
+          <div id="briefingMissions" class="mission-list"></div>
+        </div>
+        <div class="card">
+          <h2>Available departments</h2>
+          <div class="mission-list">
+            <div class="mission"><span class="check">01</span><div><strong>Border Control</strong><br><span class="muted">Review immigration cases and legal documents.</span><br><button onclick="showPage('border')" style="margin-top:8px">Open department</button></div></div>
+            <div class="mission"><span class="check">02</span><div><strong>Treasury</strong><br><span class="muted">Manage spending, borrowing and debt.</span><br><button onclick="showPage('finance')" style="margin-top:8px">Open treasury</button></div></div>
+            <div class="mission"><span class="check">03</span><div><strong>Trade Office</strong><br><span class="muted">Adjust taxes and import tariffs.</span><br><button onclick="showPage('trade')" style="margin-top:8px">Open trade office</button></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BORDER -->
+    <section class="page" id="border">
+      <h1>Border Control Center</h1>
+      <div class="subtitle">Examine each case. Decisions affect public approval, government costs and legal risk.</div>
+
+      <div class="grid">
+        <div class="card"><div class="metric-label">Cases reviewed today</div><div class="metric" id="casesReviewed">0</div></div>
+        <div class="card"><div class="metric-label">Awaiting review</div><div class="metric" id="casesRemaining">0</div></div>
+        <div class="card"><div class="metric-label">Legal risk</div><div class="metric" id="legalRisk">Low</div></div>
+        <div class="card"><div class="metric-label">Border budget</div><div class="metric gold" id="borderBudget">$12B</div></div>
+      </div>
+
+      <div class="notice">Fictional simulation: personal background, nationality or ethnicity alone are not evidence of a violation. Review the case facts and documentation before making a decision.</div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="metric-label">IMMIGRATION CASE FILE</div>
+          <div id="personCase" style="margin-top:18px"></div>
+          <div class="actions" id="caseActions"></div>
+          <div id="caseFeedback"></div>
+          <div class="actions">
+            <button onclick="nextCase()">NEXT CASE →</button>
+          </div>
+        </div>
+
+        <div class="stack">
+          <div class="card">
+            <h2>Case instructions</h2>
+            <div class="mission-list">
+              <div class="mission"><span class="check">A</span><div><strong>Approve entry</strong><br><span class="muted">Use when the case meets entry requirements.</span></div></div>
+              <div class="mission"><span class="check">B</span><div><strong>Request more documents</strong><br><span class="muted">Use when essential information is missing or unclear.</span></div></div>
+              <div class="mission"><span class="check">C</span><div><strong>Refer for legal review</strong><br><span class="muted">Use when credible evidence requires further review.</span></div></div>
+              <div class="mission"><span class="check">D</span><div><strong>Order removal after review</strong><br><span class="muted">Available only when the fictional case has a confirmed legal basis.</span></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <h2>Today's border report</h2>
+            <div id="borderReport" class="subtitle">No cases have been reviewed yet.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINANCE -->
+    <section class="page" id="finance">
+      <h1>Treasury & National Debt</h1>
+      <div class="subtitle">Balance government spending against the country's financial position.</div>
+
+      <div class="grid">
+        <div class="card"><div class="metric-label">Available funds</div><div class="metric gold" id="financeMoney">$120B</div></div>
+        <div class="card"><div class="metric-label">National debt</div><div class="metric red" id="financeDebt">$850B</div></div>
+        <div class="card"><div class="metric-label">Daily income</div><div class="metric green" id="dailyIncome">$8B</div></div>
+        <div class="card"><div class="metric-label">Daily expenses</div><div class="metric" id="dailyExpenses">$7B</div></div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <h2>Financial decisions</h2>
+          <p class="subtitle">Choose a policy and check how it affects the treasury.</p>
+          <div class="actions"><button class="success" onclick="financeAction('pay')">Pay $5B of debt</button></div>
+          <div class="actions"><button onclick="financeAction('borrow')">Borrow $10B</button></div>
+          <div class="actions"><button onclick="financeAction('invest')">Invest $8B in infrastructure</button></div>
+          <div class="actions"><button onclick="financeAction('cut')">Cut $3B of spending</button></div>
+          <div class="actions"><button onclick="financeAction('services')">Fund public services ($4B)</button></div>
+          <div id="financeFeedback" class="case-note">Choose an action to see its consequences.</div>
+        </div>
+        <div class="card">
+          <h2>Budget outlook</h2>
+          <div class="metric-label">Projected daily balance</div>
+          <div class="metric" id="budgetBalance">$1B</div>
+          <p class="subtitle">This estimate uses the current fictional daily income and expenses. Actual results can change with taxes, tariffs and events.</p>
+          <div class="progress"><div id="budgetBar"></div></div>
+          <div class="actions"><button onclick="showPage('log')">Review financial decisions</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRADE -->
+    <section class="page" id="trade">
+      <h1>Taxes & International Trade</h1>
+      <div class="subtitle">Change tax rates and tariffs. Higher rates can raise revenue but may also increase prices or reduce trade.</div>
+
+      <div class="grid">
+        <div class="card"><div class="metric-label">Income tax</div><div class="metric gold" id="taxMetric">20%</div></div>
+        <div class="card"><div class="metric-label">Import tariffs</div><div class="metric gold" id="tariffMetric">10%</div></div>
+        <div class="card"><div class="metric-label">Trade volume</div><div class="metric" id="tradeMetric">75/100</div></div>
+        <div class="card"><div class="metric-label">Economic index</div><div class="metric" id="tradeEconomy">62/100</div></div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <h2>Set national tax policy</h2>
+          <div class="slider-row">
+            <div class="slider-title"><label for="taxSlider">Income tax rate</label><strong id="taxValue">20%</strong></div>
+            <input type="range" id="taxSlider" min="5" max="50" value="20" step="1">
+            <div class="metric-note">Range: 5%–50%</div>
+          </div>
+          <div class="slider-row">
+            <div class="slider-title"><label for="tariffSlider">Import tariff rate</label><strong id="tariffValue">10%</strong></div>
+            <input type="range" id="tariffSlider" min="0" max="40" value="10" step="1">
+            <div class="metric-note">Range: 0%–40%</div>
+          </div>
+          <button class="primary" onclick="applyTradePolicy()">APPLY POLICY</button>
+          <div id="tradeFeedback" class="case-note">Changes are not applied until you confirm.</div>
+        </div>
+        <div class="card">
+          <h2>Trade analysis</h2>
+          <div id="tradeAnalysis" class="subtitle"></div>
+          <div class="actions"><button onclick="tradeDeal()">Negotiate trade agreement</button></div>
+          <div class="actions"><button onclick="showPage('events')">Review national events</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EVENTS -->
+    <section class="page" id="events">
+      <h1>National Events</h1>
+      <div class="subtitle">Unexpected developments can change the direction of your presidency.</div>
+      <div class="two-col">
+        <div class="card">
+          <h2>Current situation</h2>
+          <div id="eventList"></div>
+          <div class="actions"><button class="primary" onclick="resolveEvent()">Respond to an event</button></div>
+          <div id="eventFeedback" class="case-note">Select an event response to see its effect.</div>
+        </div>
+        <div class="card">
+          <h2>Presidential priorities</h2>
+          <div class="mission-list" id="eventMissions"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOG -->
+    <section class="page" id="log">
+      <h1>Decision Log</h1>
+      <div class="subtitle">A record of major decisions, events and consequences.</div>
+      <div class="card">
+        <div class="actions" style="justify-content:space-between;margin-top:0;margin-bottom:15px">
+          <h2 style="margin:0">Government records</h2>
+          <button onclick="clearOldLog()">Clear log</button>
+        </div>
+        <div class="log-list" id="logList"></div>
+      </div>
+    </section>
+
+    <footer>FICTIONAL POLITICAL SIMULATION · NOT AN OFFICIAL GOVERNMENT PRODUCT</footer>
+  </main>
+</div>
+
+<div id="toastArea"></div>
+
+<script>
+"use strict";
+
+/* ---------- GAME DATA ---------- */
+
+const defaultState = () => ({
+  day: 1,
+  money: 120,
+  debt: 850,
+  approval: 55,
+  economy: 62,
+  tax: 20,
+  tariff: 10,
+  trade: 75,
+  borderBudget: 12,
+  legalRisk: 10,
+  dailyIncome: 8,
+  dailyExpenses: 7,
+  casesReviewed: 0,
+  casesToday: 0,
+  caseIndex: 0,
+  missions: [],
+  completedMissions: [],
+  log: [],
+  currentEvent: null,
+  lastEvent: null,
+  eventResponses: 0,
+  ended: false
+});
+
+let state = defaultState();
+
+const briefings = [
+  {
+    quote: "Good morning. We have a very busy day ahead. The economy is important, the border is important, and the numbers must look GREAT. Review the reports, make smart decisions and keep the government running. Let's get to work!",
+    missions: [
+      "Review at least two immigration cases.",
+      "Make one financial decision.",
+      "Check the current tax and tariff policy."
+    ]
+  },
+  {
+    quote: "Welcome back. The Treasury has new numbers and the trade team wants answers. We need strong results. You can invest in infrastructure, reduce debt, adjust tariffs or review the border cases. Choose carefully. Everyone is watching.",
+    missions: [
+      "Review one immigration case.",
+      "Invest in infrastructure or pay down debt.",
+      "Review the trade outlook."
+    ]
+  },
+  {
+    quote: "We have reports from every department. Some people want lower taxes, others want more public services. There are no magic buttons in government. Look at the budget, consider the consequences and make your decision.",
+    missions: [
+      "Review the national budget.",
+      "Change or confirm the tax policy.",
+      "Respond to a national event."
+    ]
+  },
+  {
+    quote: "Today's briefing is about trade. We want fair agreements and a strong economy. Tariffs can protect some industries, but they can also make imported goods more expensive. Ask your advisers for the numbers before you act.",
+    missions: [
+      "Review trade policy.",
+      "Negotiate a trade agreement.",
+      "Review one immigration case."
+    ]
+  },
+  {
+    quote: "The public is paying attention. Some citizens want lower costs, some want stronger services, and businesses want stability. Your job is to manage competing priorities. Keep an eye on public approval and the national debt.",
+    missions: [
+      "Fund public services or cut spending.",
+      "Review the national debt.",
+      "Check public approval."
+    ]
+  },
+  {
+    quote: "We have a new set of challenges. I want the departments to explain what they are doing and why. Review the facts, compare the options and make a decision that you can defend. Let's have a productive day.",
+    missions: [
+      "Review two immigration cases.",
+      "Respond to a national event.",
+      "Make a treasury decision."
+    ]
+  },
+  {
+    quote: "It's another day in the White House. The numbers can change quickly. We have to keep the economy moving, manage the budget and make decisions based on evidence. Your briefing is ready. Make the most of it.",
+    missions: [
+      "Check the economy index.",
+      "Review tax and tariff settings.",
+      "Complete one other government action."
+    ]
+  }
+];
+
+const people = [
+  {
+    id:"US-1048", name:"Alex Morgan", age:28, nationality:"Canadian",
+    visa:"Work visa", status:"Valid", documents:"Complete",
+    background:"Software engineer with a confirmed job offer.",
+    violation:false, legal:true, emoji:"🧑‍💻"
+  },
+  {
+    id:"US-2091", name:"Maya Patel", age:34, nationality:"Indian",
+    visa:"Visitor visa", status:"Valid", documents:"Complete",
+    background:"Visiting family. Return ticket and accommodation confirmed.",
+    violation:false, legal:true, emoji:"👩"
+  },
+  {
+    id:"US-3187", name:"Daniel Weber", age:41, nationality:"German",
+    visa:"Work visa", status:"Expired", documents:"Needs review",
+    background:"Work permit expired recently. Renewal application may be pending.",
+    violation:true, legal:false, emoji:"👨"
+  },
+  {
+    id:"US-4022", name:"Sofia Costa", age:25, nationality:"Brazilian",
+    visa:"Student visa", status:"Valid", documents:"Complete",
+    background:"Accepted by a university. Enrollment has been verified.",
+    violation:false, legal:true, emoji:"👩‍🎓"
+  },
+  {
+    id:"US-5150", name:"Omar Haddad", age:37, nationality:"Jordanian",
+    visa:"Visitor visa", status:"Unclear", documents:"Missing document",
+    background:"A supporting document is missing. More information is needed.",
+    violation:false, legal:false, emoji:"👨"
+  },
+  {
+    id:"US-6305", name:"Elena Petrova", age:30, nationality:"Bulgarian",
+    visa:"Permanent resident", status:"Valid", documents:"Complete",
+    background:"Long-term resident returning home after a family visit.",
+    violation:false, legal:true, emoji:"👩"
+  },
+  {
+    id:"US-7441", name:"Noah Kim", age:22, nationality:"South Korean",
+    visa:"Student visa", status:"Valid", documents:"Complete",
+    background:"Student returning for the new university semester.",
+    violation:false, legal:true, emoji:"🧑‍🎓"
+  },
+  {
+    id:"US-8584", name:"Luis Rivera", age:45, nationality:"Mexican",
+    visa:"Work visa", status:"Expired", documents:"Needs review",
+    background:"Employer reports that a renewal request was filed.",
+    violation:true, legal:false, emoji:"👨‍🔧"
+  },
+  {
+    id:"US-9672", name:"Amira Benali", age:29, nationality:"Moroccan",
+    visa:"Visitor visa", status:"Valid", documents:"Complete",
+    background:"Tourism visit with confirmed hotel booking and return plans.",
+    violation:false, legal:true, emoji:"👩"
+  },
+  {
+    id:"US-1726", name:"Peter Novak", age:39, nationality:"Slovak",
+    visa:"Visitor visa", status:"Unclear", documents:"Missing document",
+    background:"Travel purpose needs confirmation before a final decision.",
+    violation:false, legal:false, emoji:"👨"
+  },
+  {
+    id:"US-2834", name:"Grace Okafor", age:32, nationality:"Nigerian",
+    visa:"Work visa", status:"Valid", documents:"Complete",
+    background:"Nurse with a verified employment contract.",
+    violation:false, legal:true, emoji:"👩‍⚕️"
+  },
+  {
+    id:"US-3940", name:"Mateo Silva", age:26, nationality:"Argentinian",
+    visa:"Visitor visa", status:"Valid", documents:"Complete",
+    background:"Visiting friends. Travel plans and documents are consistent.",
+    violation:false, legal:true, emoji:"🧑"
+  },
+  {
+    id:"US-4051", name:"Fatima Rahman", age:36, nationality:"Bangladeshi",
+    visa:"Student visa", status:"Unclear", documents:"Missing document",
+    background:"School confirmation has not yet arrived. Verify enrollment.",
+    violation:false, legal:false, emoji:"👩‍🎓"
+  },
+  {
+    id:"US-5169", name:"Oliver Smith", age:43, nationality:"British",
+    visa:"Work visa", status:"Valid", documents:"Complete",
+    background:"Returning employee with verified documents.",
+    violation:false, legal:true, emoji:"👨‍💼"
+  },
+  {
+    id:"US-6270", name:"Ana García", age:31, nationality:"Spanish",
+    visa:"Visitor visa", status:"Valid", documents:"Complete",
+    background:"Short business visit. Invitation and return plans confirmed.",
+    violation:false, legal:true, emoji:"👩‍💼"
+  },
+  {
+    id:"US-7393", name:"Samir Ali", age:40, nationality:"Egyptian",
+    visa:"Work visa", status:"Expired", documents:"Needs review",
+    background:"The case file shows a possible extension request. Verify it.",
+    violation:true, legal:false, emoji:"👨‍🔬"
+  }
+];
+
+const eventPool = [
+  {
+    title:"Consumer prices are rising",
+    description:"The economic team reports pressure on household budgets.",
+    choices:[
+      {label:"Provide targeted relief ($3B)", money:-3, approval:4, economy:1, text:"Targeted relief was approved."},
+      {label:"Take no immediate action", money:0, approval:-2, economy:0, text:"The government will monitor prices."}
+    ]
+  },
+  {
+    title:"Infrastructure investment proposal",
+    description:"A proposal would upgrade transport links and public facilities.",
+    choices:[
+      {label:"Approve the investment ($8B)", money:-8, approval:3, economy:5, text:"Infrastructure investment was approved."},
+      {label:"Delay the proposal", money:0, approval:-1, economy:-1, text:"The proposal was delayed."}
+    ]
+  },
+  {
+    title:"Trade partners request negotiations",
+    description:"Several trading partners have requested a meeting about tariffs.",
+    choices:[
+      {label:"Open negotiations", money:-1, approval:2, economy:3, trade:5, text:"Trade negotiations have begun."},
+      {label:"Keep the current policy", money:0, approval:0, economy:0, trade:-2, text:"Current trade policy remains in place."}
+    ]
+  },
+  {
+    title:"Public services need funding",
+    description:"Local officials report additional needs for public services.",
+    choices:[
+      {label:"Allocate $4B", money:-4, approval:4, economy:1, text:"Additional service funding was allocated."},
+      {label:"Review spending first", money:0, approval:-1, economy:0, text:"Officials will submit a revised plan."}
+    ]
+  },
+  {
+    title:"Treasury receives a positive report",
+    description:"Revenue is slightly above expectations this week.",
+    choices:[
+      {label:"Put $5B toward debt", money:-5, debt:-5, approval:1, text:"The Treasury used the surplus to reduce debt."},
+      {label:"Keep funds in reserve", money:3, approval:0, economy:1, text:"The surplus was added to reserves."}
+    ]
+  }
+];
+
+/* ---------- HELPERS ---------- */
+
+const $ = id => document.getElementById(id);
+const clamp = (n,min,max) => Math.max(min,Math.min(max,n));
+const money = n => "$" + Math.round(n) + "B";
+
+function addLog(message) {
+  state.log.unshift({
+    day: state.day,
+    time: new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}),
+    message
+  });
+  if (state.log.length > 150) state.log.length = 150;
+  renderLog();
+}
+
+function toast(message) {
+  const area = $("toastArea");
+  const node = document.createElement("div");
+  node.className = "toast";
+  node.textContent = message;
+  area.replaceChildren(node);
+  setTimeout(() => {
+    if (node.parentNode) node.remove();
+  }, 2800);
+}
+
+function showPage(page) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".nav-btn[data-page]").forEach(b => b.classList.remove("active"));
+  const section = $(page);
+  if (section) section.classList.add("active");
+  const button = document.querySelector('.nav-btn[data-page="' + page + '"]');
+  if (button) button.classList.add("active");
+  if (page === "briefing") renderBriefing();
+  if (page === "border") renderCase();
+  if (page === "events") renderEvents();
+  if (page === "trade") renderTrade();
+}
+
+document.querySelectorAll(".nav-btn[data-page]").forEach(button => {
+  button.addEventListener("click", () => showPage(button.dataset.page));
+});
+
+/* ---------- DAILY BRIEFING ---------- */
+
+function getBriefing() {
+  return briefings[(state.day - 1) % briefings.length];
+}
+
+function renderBriefing() {
+  const b = getBriefing();
+  $("briefingDay").textContent = state.day;
+  $("trumpQuote").textContent = b.quote;
+  $("dashboardBriefing").textContent = b.quote;
+  renderMissions();
+}
+
+function readBriefingAgain() {
+  renderBriefing();
+  toast("The president has repeated the daily briefing.");
+}
+
+function renderMissions() {
+  const missions = getBriefing().missions;
+  const html = missions.map((m,i) => {
+    const done = state.completedMissions.includes(state.day + ":" + i);
+    return `<div class="mission ${done ? "done" : ""}">
+      <span class="check">${done ? "✓" : "○"}</span>
+      <div>${escapeHTML(m)}${done ? '<div class="green">Completed</div>' : ""}</div>
+    </div>`;
+  }).join("");
+  $("briefingMissions").innerHTML = html;
+  $("dashboardMissions").innerHTML = html;
+}
+
+function completeMission(index) {
+  const key = state.day + ":" + index;
+  if (!state.completedMissions.includes(key)) {
+    state.completedMissions.push(key);
+    renderMissions();
+  }
+}
+
+function markMissions() {
+  const missions = getBriefing().missions;
+  missions.forEach((m,i) => {
+    const text = m.toLowerCase();
+    let done = false;
+    if (text.includes("immigration") || text.includes("case")) {
+      done = state.casesToday >= (text.includes("two") ? 2 : 1);
+    } else if (text.includes("financial") || text.includes("treasury") ||
+               text.includes("debt") || text.includes("budget") ||
+               text.includes("spending") || text.includes("services")) {
+      done = state.log.some(x => x.day === state.day &&
+        /debt|treasury|infrastructure|spending|services|borrow|budget|surplus/i.test(x.message));
+    } else if (text.includes("tax") || text.includes("tariff") || text.includes("trade")) {
+      done = state.log.some(x => x.day === state.day &&
+        /tax|tariff|trade/i.test(x.message));
+    } else if (text.includes("event")) {
+      done = state.eventResponses > 0;
+    } else if (text.includes("economy") || text.includes("approval")) {
+      done = true;
+    } else if (text.includes("other government action")) {
+      done = state.log.some(x => x.day === state.day);
+    }
+    if (done) completeMission(i);
+  });
+}
+
+/* ---------- DASHBOARD ---------- */
+
+function renderDashboard() {
+  $("headerDay").textContent = "DAY " + state.day;
+  $("sideDay").textContent = state.day;
+  $("moneyMetric").textContent = money(state.money);
+  $("debtMetric").textContent = money(state.debt);
+  $("approvalMetric").textContent = state.approval + "%";
+  $("economyMetric").textContent = state.economy + "/100";
+  $("approvalBar").style.width = state.approval + "%";
+  $("economyBar").style.width = state.economy + "%";
+  $("approvalBar").style.background = state.approval < 30 ? "var(--red)" : "var(--green)";
+  $("economyBar").style.background = state.economy < 30 ? "var(--red)" : "var(--blue)";
+  $("dashboardEvents").innerHTML = state.currentEvent
+    ? `<div class="event"><strong>${escapeHTML(state.currentEvent.title)}</strong><p>${escapeHTML(state.currentEvent.description)}</p></div>`
+    : '<div class="subtitle">No urgent event is waiting for a response.</div>';
+  renderBriefing();
+  renderFinance();
+  renderTrade();
+  renderBorderStats();
+}
+
+function renderFinance() {
+  $("financeMoney").textContent = money(state.money);
+  $("financeDebt").textContent = money(state.debt);
+  $("dailyIncome").textContent = money(state.dailyIncome);
+  $("dailyExpenses").textContent = money(state.dailyExpenses);
+  const balance = state.dailyIncome - state.dailyExpenses;
+  $("budgetBalance").textContent = (balance >= 0 ? "+" : "") + money(balance);
+  $("budgetBar").style.width = clamp(50 + balance * 5,0,100) + "%";
+}
+
+function renderTrade() {
+  $("taxMetric").textContent = state.tax + "%";
+  $("tariffMetric").textContent = state.tariff + "%";
+  $("tradeMetric").textContent = state.trade + "/100";
+  $("tradeEconomy").textContent = state.economy + "/100";
+  $("taxSlider").value = state.tax;
+  $("tariffSlider").value = state.tariff;
+  $("taxValue").textContent = state.tax + "%";
+  $("tariffValue").textContent = state.tariff + "%";
+
+  let analysis = "";
+  if (state.tax < 15) analysis += "Low income taxes may leave households and businesses with more money, but government revenue is lower. ";
+  else if (state.tax > 35) analysis += "High income taxes increase revenue in this model, but may reduce approval and economic activity. ";
+  else analysis += "Income tax is in the middle range. ";
+
+  if (state.tariff < 10) analysis += "Low tariffs support trade and may help keep import costs down.";
+  else if (state.tariff > 25) analysis += "High tariffs may protect selected domestic industries but can reduce trade and raise costs.";
+  else analysis += "Tariffs are moderate in this model.";
+
+  $("tradeAnalysis").textContent = analysis;
+}
+
+$("taxSlider").addEventListener("input", () => {
+  $("taxValue").textContent = $("taxSlider").value + "%";
+});
+$("tariffSlider").addEventListener("input", () => {
+  $("tariffValue").textContent = $("tariffSlider").value + "%";
+});
+
+function applyTradePolicy() {
+  const oldTax = state.tax;
+  const oldTariff = state.tariff;
+  state.tax = Number($("taxSlider").value);
+  state.tariff = Number($("tariffSlider").value);
+
+  const taxDiff = state.tax - oldTax;
+  const tariffDiff = state.tariff - oldTariff;
+
+  state.dailyIncome = clamp(8 + (state.tax - 20) * .12 + state.tariff * .035,2,20);
+  state.trade = clamp(state.trade - tariffDiff * .25,0,100);
+  state.economy = clamp(state.economy - Math.max(0,Math.abs(taxDiff) - 8) * .2 - Math.max(0,tariffDiff) * .12,0,100);
+
+  if (state.tax > 35) state.approval -= 2;
+  else if (state.tax < 15) state.approval += 1;
+
+  if (state.tariff > 25) state.approval += 1;
+  if (state.tariff > 30) state.trade -= 3;
+
+  state.approval = clamp(state.approval,0,100);
+  state.trade = clamp(state.trade,0,100);
+
+  $("tradeFeedback").textContent =
+    `Policy applied. Income tax: ${oldTax}% → ${state.tax}%. Tariffs: ${oldTariff}% → ${state.tariff}%. Revenue and trade forecasts have been updated.`;
+
+  addLog(`Tax and tariff policy updated: income tax ${state.tax}%, tariffs ${state.tariff}%.`);
+  markMissions();
+  renderDashboard();
+  toast("Trade and tax policy updated.");
+}
+
+function tradeDeal() {
+  if (state.money < 1) {
+    toast("The treasury needs at least $1B for negotiation costs.");
+    return;
+  }
+  state.money -= 1;
+  state.trade = clamp(state.trade + 7,0,100);
+  state.economy = clamp(state.economy + 2,0,100);
+  state.approval = clamp(state.approval + 2,0,100);
+  $("tradeFeedback").textContent = "A fictional trade agreement has been negotiated. Trade volume and the economic index improved.";
+  addLog("Negotiated a trade agreement for $1B.");
+  markMissions();
+  renderDashboard();
+  toast("Trade agreement reached.");
+}
+
+/* ---------- FINANCE ---------- */
+
+function financeAction(action) {
+  let message = "";
+
+  if (action === "pay") {
+    if (state.money < 5) return toast("Not enough money to pay $5B.");
+    state.money -= 5;
+    state.debt = Math.max(0,state.debt - 5);
+    state.approval = clamp(state.approval + 1,0,100);
+    message = "Paid $5B of national debt.";
+  }
+
+  if (action === "borrow") {
+    state.money += 10;
+    state.debt += 10;
+    state.approval = clamp(state.approval + 1,0,100);
+    message = "Borrowed $10B. Treasury funds and national debt both increased.";
+  }
+
+  if (action === "invest") {
+    if (state.money < 8) return toast("Not enough money for the $8B investment.");
+    state.money -= 8;
+    state.economy = clamp(state.economy + 5,0,100);
+    state.approval = clamp(state.approval + 3,0,100);
+    message = "Invested $8B in infrastructure. The economy index improved.";
+  }
+
+  if (action === "cut") {
+    state.dailyExpenses = Math.max(2,state.dailyExpenses - 3);
+    state.approval = clamp(state.approval - 2,0,100);
+    message = "Reduced daily government spending by $3B. Some services may be affected.";
+  }
+
+  if (action === "services") {
+    if (state.money < 4) return toast("Not enough money to fund public services.");
+    state.money -= 4;
+    state.approval = clamp(state.approval + 4,0,100);
+    state.economy = clamp(state.economy + 1,0,100);
+    message = "Allocated $4B to public services.";
+  }
+
+  $("financeFeedback").textContent = message;
+  addLog(message);
+  markMissions();
+  renderDashboard();
+  toast(message);
+}
+
+/* ---------- BORDER CASES ---------- */
+
+let caseQueue = [];
+
+function shuffleCases() {
+  caseQueue = [...people].sort(() => Math.random() - .5);
+  state.caseIndex = 0;
+  state.casesToday = 0;
+  state.casesReviewed = 0;
+}
+
+function currentPerson() {
+  if (!caseQueue.length) shuffleCases();
+  return caseQueue[state.caseIndex % caseQueue.length];
+}
+
+function renderBorderStats() {
+  $("casesReviewed").textContent = state.casesToday;
+  $("casesRemaining").textContent = Math.max(0,caseQueue.length - state.caseIndex - 1);
+  $("legalRisk").textContent = state.legalRisk < 20 ? "Low" : state.legalRisk < 50 ? "Moderate" : "High";
+  $("borderBudget").textContent = money(state.borderBudget);
+}
+
+function renderCase() {
+  const p = currentPerson();
+  $("personCase").innerHTML = `
+    <div class="person">
+      <div class="person-avatar">${p.emoji}</div>
+      <div>
+        <div class="person-name">${escapeHTML(p.name)}</div>
+        <span class="pill">CASE ${escapeHTML(p.id)}</span>
+        <span class="pill">${p.age} YEARS</span>
+        <div class="subtitle" style="margin-top:9px">${escapeHTML(p.background)}</div>
+      </div>
+    </div>
+    <div class="details">
+      <div class="detail"><small>Nationality</small><strong>${escapeHTML(p.nationality)}</strong></div>
+      <div class="detail"><small>Visa type</small><strong>${escapeHTML(p.visa)}</strong></div>
+      <div class="detail"><small>Immigration status</small><strong>${escapeHTML(p.status)}</strong></div>
+      <div class="detail"><small>Documents</small><strong>${escapeHTML(p.documents)}</strong></div>
+    </div>
+    <div class="case-note"><strong>Officer note:</strong> ${p.status === "Valid" ? "No confirmed status violation is recorded." : p.status === "Unclear" ? "The file is incomplete. Request evidence or refer for review." : "The file indicates an expired permit, but check for a pending renewal before any final decision."}</div>
+  `;
+
+  const actions = [
+    ["approve","Approve entry","success"],
+    ["documents","Request more documents",""],
+    ["review","Refer for legal review",""],
+    ["remove","Order removal after legal confirmation","danger"]
+  ];
+
+  $("caseActions").innerHTML = actions.map(([action,label,cls]) =>
+    `<button class="${cls}" onclick="decideCase('${action}')">${label}</button>`
+  ).join("");
+
+  $("caseFeedback").innerHTML = "";
+  renderBorderStats();
+}
+
+function decideCase(action) {
+  const p = currentPerson();
+  let message = "";
+  let good = false;
+
+  if (action === "approve") {
+    if (p.status === "Valid" && p.documents === "Complete") {
+      state.approval = clamp(state.approval + 1,0,100);
+      message = `Entry approved for ${p.name}. Documents and status were in order.`;
+      good = true;
+    } else {
+      state.approval = clamp(state.approval - 1,0,100);
+      message = `Entry was provisionally approved for ${p.name}. The file still needs follow-up because the status or documents are unclear.`;
+    }
+  }
+
+  if (action === "documents") {
+    state.money = Math.max(0,state.money - .2);
+    message = `Additional documents requested for ${p.name}. No final immigration decision was made.`;
+    good = p.status === "Unclear" || p.documents !== "Complete";
+  }
+
+  if (action === "review") {
+    state.money = Math.max(0,state.money - .3);
+    state.legalRisk = clamp(state.legalRisk - 2,0,100);
+    message = `Case ${p.id} referred for legal review. The final decision is pending.`;
+    good = true;
+  }
+
+  if (action === "remove") {
+    if (p.status === "Expired" && p.violation && p.legal) {
+      state.money = Math.max(0,state.money - .5);
+      state.approval = clamp(state.approval + 1,0,100);
+      message = `Removal order recorded for ${p.name} after legal confirmation.`;
+      good = true;
+    } else {
+      state.legalRisk = clamp(state.legalRisk + 12,0,100);
+      state.approval = clamp(state.approval - 4,0,100);
+      state.money = Math.max(0,state.money - 1);
+      message = `The removal order for ${p.name} was blocked: the case lacks confirmed legal grounds. The decision increased legal risk and government costs.`;
+      good = false;
+    }
+  }
+
+  if (good) {
+    $("caseFeedback").innerHTML = `<div class="case-note green">${escapeHTML(message)}</div>`;
+  } else {
+    $("caseFeedback").innerHTML = `<div class="case-note">${escapeHTML(message)}</div>`;
+  }
+
+  state.casesToday++;
+  state.casesReviewed++;
+  state.borderBudget = Math.max(0,state.borderBudget - .1);
+  addLog(message);
+  markMissions();
+  renderDashboard();
+  renderCase();
+  $("caseFeedback").innerHTML = `<div class="case-note ${good ? "green" : ""}">${escapeHTML(message)}</div>`;
+  $("borderReport").textContent = `Reviewed ${state.casesToday} case(s) today. Legal risk is ${state.legalRisk < 20 ? "low" : state.legalRisk < 50 ? "moderate" : "high"}.`;
+}
+
+function nextCase() {
+  state.caseIndex++;
+  if (state.caseIndex >= caseQueue.length) {
+    shuffleCases();
+    toast("All cases reviewed. A new randomized case list is ready.");
+  }
+  renderCase();
+}
+
+/* ---------- NATIONAL EVENTS ---------- */
+
+function createEvent() {
+  const base = eventPool[Math.floor(Math.random() * eventPool.length)];
+  state.currentEvent = JSON.parse(JSON.stringify(base));
+  state.eventResponses = 0;
+}
+
+function renderEvents() {
+  if (!state.currentEvent) {
+    $("eventList").innerHTML = '<div class="subtitle">No event is currently waiting for a decision. Advance to the next day to receive new reports.</div>';
+    return;
+  }
+
+  const e = state.currentEvent;
+  $("eventList").innerHTML = `
+    <div class="event">
+      <span class="pill">DAY ${state.day}</span>
+      <strong style="margin-top:10px">${escapeHTML(e.title)}</strong>
+      <p>${escapeHTML(e.description)}</p>
+    </div>
+    ${e.choices.map((c,i) => `<div class="event">
+      <strong>${escapeHTML(c.label)}</strong>
+      <button style="margin-top:10px" onclick="chooseEvent(${i})">Choose this response</button>
+    </div>`).join("")}
+  `;
+
+  $("eventMissions").innerHTML = `
+    <div class="mission"><span class="check">01</span><div><strong>Review the situation</strong><br><span class="muted">Read the event report before choosing a response.</span></div></div>
+    <div class="mission"><span class="check">02</span><div><strong>Consider the budget</strong><br><span class="muted">Some responses cost money; others affect approval or the economy.</span></div></div>
+    <div class="mission"><span class="check">03</span><div><strong>Record the decision</strong><br><span class="muted">Your response will be added to the government log.</span></div></div>
+  `;
+}
+
+function chooseEvent(index) {
+  if (!state.currentEvent) return;
+  const choice = state.currentEvent.choices[index];
+  if (!choice) return;
+  if (choice.money < 0 && state.money < Math.abs(choice.money)) {
+    $("eventFeedback").textContent = "The treasury does not have enough funds for that response.";
+    return;
+  }
+
+  state.money = Math.max(0,state.money + (choice.money || 0));
+  state.debt = Math.max(0,state.debt + (choice.debt || 0));
+  state.approval = clamp(state.approval + (choice.approval || 0),0,100);
+  state.economy = clamp(state.economy + (choice.economy || 0),0,100);
+  state.trade = clamp(state.trade + (choice.trade || 0),0,100);
+
+  $("eventFeedback").textContent = choice.text;
+  addLog(`National event: ${choice.text}`);
+  state.currentEvent = null;
+  state.eventResponses++;
+  markMissions();
+  renderEvents();
+  renderDashboard();
+  toast("National event resolved.");
+}
+
+function resolveEvent() {
+  showPage("events");
+  if (!state.currentEvent) {
+    toast("No event is waiting for a response.");
+  }
+}
+
+/* ---------- DAY PROGRESSION ---------- */
+
+function nextDay() {
+  if (state.ended) return;
+
+  state.day++;
+  state.casesToday = 0;
+  state.casesReviewed = 0;
+  state.eventResponses = 0;
+
+  const dailyBalance = state.dailyIncome - state.dailyExpenses;
+  state.money += dailyBalance;
+
+  if (state.money < 0) {
+    state.debt += Math.abs(state.money);
+    state.money = 0;
+    state.approval = clamp(state.approval - 3,0,100);
+    addLog("Treasury shortfall: unpaid expenses were added to national debt.");
+  }
+
+  state.debt = Math.max(0,state.debt);
+  state.economy = clamp(state.economy + (dailyBalance >= 0 ? .5 : -1),0,100);
+
+  if (state.approval < 20) {
+    state.ended = true;
+    $("headerStatus").textContent = "GOVERNMENT IN CRISIS";
+    addLog("Government crisis: public approval fell below 20%.");
+    toast("Government crisis! Start a new game to try another strategy.");
+    return;
+  }
+
+  createEvent();
+  shuffleCases();
+  addLog(`Day ${state.day} began. Daily balance: ${dailyBalance >= 0 ? "+" : ""}${money(dailyBalance)}.`);
+  renderDashboard();
+  renderEvents();
+  renderCase();
+  renderBriefing();
+  showPage("briefing");
+  toast("Day " + state.day + ": the president is ready to speak.");
+}
+
+/* ---------- SAVE / RESET ---------- */
+
+function saveGame() {
+  try {
+    localStorage.setItem("borderControlPresidentialSimulator", JSON.stringify({
+      state,
+      caseQueue,
+      savedAt: new Date().toISOString()
+    }));
+    toast("Game saved in this browser.");
+  } catch (e) {
+    toast("Save failed. Your browser may block local storage.");
+  }
+}
+
+function loadGame() {
+  try {
+    const raw = localStorage.getItem("borderControlPresidentialSimulator");
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    if (!data || !data.state || !Array.isArray(data.state.log)) return false;
+    state = Object.assign(defaultState(), data.state);
+    caseQueue = Array.isArray(data.caseQueue) ? data.caseQueue : [];
+    if (!caseQueue.length) shuffleCases();
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function resetGame() {
+  if (!confirm("Start a new presidency? Your current game will be replaced.")) return;
+  state = defaultState();
+  shuffleCases();
+  createEvent();
+  addLog("A new presidency began.");
+  renderDashboard();
+  renderEvents();
+  renderCase();
+  showPage("briefing");
+  toast("New game started.");
+}
+
+$("saveButton").addEventListener("click", saveGame);
+$("resetButton").addEventListener("click", resetGame);
+
+function clearOldLog() {
+  if (!confirm("Clear the decision log?")) return;
+  state.log = [];
+  renderLog();
+  toast("Decision log cleared.");
+}
+
+function renderLog() {
+  const el = $("logList");
+  if (!state.log.length) {
+    el.innerHTML = '<div class="subtitle">No decisions recorded yet.</div>';
+    return;
+  }
+  el.innerHTML = state.log.map(item => `
+    <div class="log-item">
+      <small>DAY ${item.day} · ${escapeHTML(item.time || "")}</small>
+      ${escapeHTML(item.message)}
+    </div>
+  `).join("");
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, ch => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  }[ch]));
+}
+
+/* ---------- STARTUP ---------- */
+
+shuffleCases();
+createEvent();
+addLog("Presidential Simulator initialized.");
+renderDashboard();
+renderCase();
+renderEvents();
+renderLog();
+renderBriefing();
+</script>
+</body>
+</html>
+```

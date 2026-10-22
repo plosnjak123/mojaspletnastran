@@ -1,0 +1,494 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Border Control: Presidential Simulator</title>
+<style>
+:root {
+  --navy:#081321;
+  --panel:#111f30;
+  --line:#34465c;
+  --gold:#d8b56d;
+  --muted:#9aabbe;
+  --green:#27694d;
+  --red:#8e3038;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:#080e17;color:#edf2f8;
+  font-family:Arial,Helvetica,sans-serif;
+}
+button{font:inherit;cursor:pointer}
+.topbar{
+  min-height:72px;padding:15px 24px;background:#101c2a;
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:15px;flex-wrap:wrap
+}
+.brand{font-size:20px;font-weight:800;letter-spacing:1.5px}
+.brand span{color:var(--gold)}
+.topmeta{color:var(--muted);font-size:12px;letter-spacing:1px}
+.stats{display:flex;gap:20px;flex-wrap:wrap}
+.stat{font-size:12px;color:var(--muted)}
+.stat b{display:block;color:white;font-size:19px;margin-top:4px}
+main{max-width:1200px;margin:auto;padding:24px}
+.heading{display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap}
+.heading h1{font-size:25px;margin:0 0 8px}
+.heading p{color:var(--muted);margin:0}
+.pill{border:1px solid #7e6841;color:var(--gold);padding:8px 12px;font-size:11px;letter-spacing:1px}
+.layout{
+  display:grid;grid-template-columns:minmax(0,1.4fr) minmax(290px,.8fr);
+  gap:18px;margin-top:22px
+}
+.panel{background:var(--panel);border:1px solid var(--line);min-width:0}
+.panelhead{
+  padding:15px 18px;border-bottom:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  font-size:12px;font-weight:bold;letter-spacing:1px
+}
+.live{color:#72d6a0}
+.scene{
+  min-height:290px;position:relative;overflow:hidden;
+  background:linear-gradient(#26384a,#172638 65%,#0d1724);
+  display:flex;align-items:center;justify-content:center;
+}
+.scene:before{
+  content:"";position:absolute;top:0;left:0;right:0;height:45px;
+  background:repeating-linear-gradient(90deg,#172536 0 65px,#304055 66px 70px);
+  opacity:.8
+}
+.window{
+  position:absolute;top:44px;left:10%;right:10%;height:125px;
+  background:linear-gradient(#7993a4,#b8c5c8 70%,#677d8c);
+  border:8px solid #182536;
+}
+.window:after{
+  content:"";position:absolute;left:50%;top:0;bottom:0;width:5px;background:#27384b
+}
+.counter{
+  position:absolute;bottom:0;height:65px;left:0;right:0;
+  background:linear-gradient(#4c3c31,#201b1a);
+  border-top:5px solid #806344
+}
+.traveler{
+  position:absolute;bottom:47px;left:50%;transform:translateX(-50%);
+  text-align:center;z-index:2;animation:arrive .6s ease-out
+}
+.personemoji{font-size:100px;filter:drop-shadow(0 6px 5px #0007)}
+.personlabel{background:#101c2a;padding:7px 13px;border:1px solid #60738a;font-size:12px}
+@keyframes arrive{from{opacity:0;transform:translate(-50%,30px)}to{opacity:1;transform:translate(-50%,0)}}
+.scenefoot{
+  position:absolute;top:185px;left:15px;right:15px;
+  display:flex;justify-content:space-between;color:#e1e8ef;
+  font-size:10px;letter-spacing:1px
+}
+.content{padding:20px}
+.personname{font-size:25px;font-weight:bold;margin-bottom:6px}
+.personsub{color:var(--muted);font-size:13px;margin-bottom:18px}
+.quote{font-style:italic;line-height:1.6;color:#e3e8ef;margin:15px 0}
+.grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:1px;
+  background:var(--line);border:1px solid var(--line)
+}
+.field{background:#142235;padding:12px;min-width:0}
+.field small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.7px;margin-bottom:7px}
+.field strong{font-size:13px;overflow-wrap:anywhere}
+.badge{font-size:10px;padding:4px 7px;border:1px solid #65758a}
+.badge.ok{color:#83d8ad;border-color:#397d60}
+.badge.warn{color:#ffce82;border-color:#8e7043}
+.badge.bad{color:#ff9999;border-color:#8e4545}
+.rightbody{padding:18px}
+.sectionlabel{font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:12px}
+.checklist{display:grid;gap:10px;margin-bottom:22px}
+.checkrow{display:flex;justify-content:space-between;gap:12px;font-size:13px}
+.checkrow span:first-child{color:#bac7d5}
+.question{background:#0b1726;border-left:3px solid var(--gold);padding:14px;font-size:14px;line-height:1.6}
+.question small{display:block;color:var(--gold);font-size:10px;margin-bottom:7px;letter-spacing:1px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.action{
+  border:1px solid #506176;padding:14px 8px;color:white;
+  background:#192b40;font-size:12px;font-weight:bold;letter-spacing:.5px
+}
+.action:hover{filter:brightness(1.25)}
+.allow{background:#174c39;border-color:#397b5d}
+.deny{background:#632b32;border-color:#98464e}
+.secondary{width:100%;background:#111d2b;color:#cbd6e2;border:1px solid var(--line);padding:11px;margin-top:10px;font-size:12px}
+.log{margin-top:18px}
+.logbody{padding:12px 18px;min-height:100px;max-height:180px;overflow:auto}
+.logentry{font-size:12px;color:#aab9c9;padding:8px 0;border-bottom:1px solid #26384b}
+.logentry b{color:#e2c27e}
+.bottomnote{font-size:11px;color:#77899e;line-height:1.6;margin-top:18px}
+.overlay{
+  display:none;position:fixed;inset:0;background:#000c;z-index:10;
+  align-items:center;justify-content:center;padding:20px
+}
+.modal{
+  background:#111f30;border:1px solid #826b42;max-width:480px;width:100%;
+  padding:26px;box-shadow:0 15px 80px #0009
+}
+.modal h2{color:var(--gold);font-size:24px}
+.modal p{line-height:1.7;color:#d0dae5}
+.modal button{padding:12px 18px;background:var(--gold);border:0;font-weight:bold}
+#toast{color:var(--gold);font-size:13px;margin-top:12px;min-height:18px}
+@media(max-width:800px){
+  main{padding:12px}
+  .layout{grid-template-columns:1fr}
+  .scene{min-height:270px}
+  .topbar{padding:14px}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div>
+    <div class="brand">UNITED STATES <span>· BORDER CONTROL</span></div>
+    <div class="topmeta">PRESIDENTIAL IMMIGRATION SIMULATOR · FICTIONAL GAME</div>
+  </div>
+  <div class="stats">
+    <div class="stat">CASES REVIEWED<b id="sCases">0</b></div>
+    <div class="stat">ENTRY GRANTED<b id="sAllowed">0</b></div>
+    <div class="stat">ENTRY DENIED<b id="sDenied">0</b></div>
+    <div class="stat">SCORE<b id="sScore">0</b></div>
+  </div>
+</header>
+
+<main>
+  <div class="heading">
+    <div>
+      <h1>Immigration Inspection Office</h1>
+      <p>Review the visitor's case before making your decision.</p>
+    </div>
+    <div class="pill">● SIMULATION ACTIVE</div>
+  </div>
+
+  <div class="layout">
+    <section class="panel">
+      <div class="panelhead">
+        <span>01 / PRIMARY INSPECTION</span>
+        <span class="live">● OFFICER READY</span>
+      </div>
+      <div class="scene">
+        <div class="window"></div>
+        <div class="scenefoot">
+          <span>U.S. CUSTOMS & BORDER INSPECTION</span>
+          <span>DESK 01</span>
+        </div>
+        <div class="traveler">
+          <div class="personemoji" id="face">🧑🏻</div>
+          <div class="personlabel" id="sceneName">WAITING FOR VISITOR</div>
+        </div>
+        <div class="counter"></div>
+      </div>
+      <div class="content">
+        <div class="personname" id="personName">Loading case...</div>
+        <div class="personsub" id="personSub">Waiting for inspection</div>
+        <div class="grid">
+          <div class="field"><small>Nationality</small><strong id="nationality">—</strong></div>
+          <div class="field"><small>Age</small><strong id="age">—</strong></div>
+          <div class="field"><small>Travel document</small><strong id="passport">—</strong></div>
+          <div class="field"><small>Visa / authorization</small><strong id="visa">—</strong></div>
+          <div class="field"><small>Purpose of visit</small><strong id="purpose">—</strong></div>
+          <div class="field"><small>Intended stay</small><strong id="stay">—</strong></div>
+        </div>
+        <div class="quote" id="quote"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panelhead">
+        <span>02 / CASE REVIEW</span>
+        <span id="caseNo">CASE #0001</span>
+      </div>
+      <div class="rightbody">
+        <div class="sectionlabel">DOCUMENT VERIFICATION</div>
+        <div class="checklist">
+          <div class="checkrow"><span>Passport validity</span><b id="cPassport">—</b></div>
+          <div class="checkrow"><span>Entry authorization</span><b id="cVisa">—</b></div>
+          <div class="checkrow"><span>Visit consistency</span><b id="cPurpose">—</b></div>
+          <div class="checkrow"><span>Additional review</span><b id="cReview">—</b></div>
+        </div>
+        <div class="sectionlabel">TRAVELER STATEMENT</div>
+        <div class="question">
+          <small>QUESTION TO THE OFFICER</small>
+          <span id="question">“May I enter the United States?”</span>
+        </div>
+        <div id="toast"></div>
+        <div class="actions">
+          <button class="action allow" id="allowBtn">✓ ALLOW ENTRY</button>
+          <button class="action deny" id="denyBtn">✕ DENY ENTRY</button>
+        </div>
+        <button class="secondary" id="soundBtn">SOUND: ON</button>
+        <button class="secondary" id="restartBtn">RESTART SIMULATION</button>
+        <div class="bottomnote">
+          Training-style fictional scenario. Decisions are based on the
+          individual case's documents and stated circumstances, not race,
+          ethnicity, religion or nationality alone. Real U.S. entry decisions
+          depend on applicable law and the responsible authorities.
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel log">
+    <div class="panelhead"><span>03 / INSPECTION LOG</span><span>RECENT ACTIVITY</span></div>
+    <div class="logbody" id="log">
+      <div class="logentry">System initialized. Awaiting first traveler.</div>
+    </div>
+  </section>
+</main>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div id="eventIcon" style="font-size:42px">⚠</div>
+    <h2 id="eventTitle">CASE UPDATE</h2>
+    <p id="eventText"></p>
+    <p id="eventEffect"></p>
+    <button id="continueBtn">CONTINUE INSPECTION →</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+const cases = [
+ {
+  name:"Carlos Ramirez",country:"Mexico",flag:"🇲🇽",age:29,face:"👨🏽",
+  passport:"Valid Mexican passport",visa:"Valid B-2 visitor visa",
+  purpose:"Visit family and tourism",stay:"14 days",
+  quote:"Good morning, officer. I am visiting my sister and staying at her home.",
+  checks:["PASS","PASS","CONSISTENT","NONE"],
+  correct:"allow",reason:"The fictional case shows valid documents and a consistent temporary visit."
+ },
+ {
+  name:"Emily Wilson",country:"Canada",flag:"🇨🇦",age:34,face:"👩🏻",
+  passport:"Valid Canadian passport",visa:"Visa-exempt visitor (scenario)",
+  purpose:"Tourism",stay:"8 days",
+  quote:"I am planning to visit museums and national parks before returning home.",
+  checks:["PASS","PASS","CONSISTENT","NONE"],
+  correct:"allow",reason:"The case indicates a permitted short visit with appropriate documentation."
+ },
+ {
+  name:"Ahmed Hassan",country:"Egypt",flag:"🇪🇬",age:26,face:"👨🏽",
+  passport:"Valid Egyptian passport",visa:"Valid F-1 student visa",
+  purpose:"University studies",stay:"Academic year",
+  quote:"I have been admitted to a university and have my student documents.",
+  checks:["PASS","PASS","CONSISTENT","NONE"],
+  correct:"allow",reason:"The fictional student case includes the stated supporting documents."
+ },
+ {
+  name:"Sofia Novak",country:"Germany",flag:"🇩🇪",age:25,face:"👩🏼",
+  passport:"Valid German passport",visa:"Valid ESTA authorization",
+  purpose:"Tourism",stay:"10 days",
+  quote:"I am visiting friends and will return before my authorized stay ends.",
+  checks:["PASS","PASS","CONSISTENT","NONE"],
+  correct:"allow",reason:"The scenario indicates valid travel authorization for a short visit."
+ },
+ {
+  name:"Diego Torres",country:"Mexico",flag:"🇲🇽",age:32,face:"👨🏽",
+  passport:"Valid Mexican passport",visa:"Expired visitor visa",
+  purpose:"Tourism",stay:"3 weeks",
+  quote:"I thought my visa was still valid. I did not notice the expiry date.",
+  checks:["PASS","FLAG","CONSISTENT","VERIFY"],
+  correct:"deny",reason:"The scenario flags an expired visa and no alternative authorization."
+ },
+ {
+  name:"Priya Sharma",country:"India",flag:"🇮🇳",age:28,face:"👩🏽",
+  passport:"Valid Indian passport",visa:"Student visa application pending",
+  purpose:"University studies",stay:"Academic year",
+  quote:"My application is still being processed, but classes start next week.",
+  checks:["PASS","FLAG","CONSISTENT","VERIFY"],
+  correct:"deny",reason:"The fictional case indicates the required student authorization has not been issued."
+ },
+ {
+  name:"Liam Murphy",country:"Ireland",flag:"🇮🇪",age:40,face:"👨🏻",
+  passport:"Valid Irish passport",visa:"Valid employment visa",
+  purpose:"Authorized employment",stay:"12 months",
+  quote:"My employer has provided the paperwork for my approved position.",
+  checks:["PASS","PASS","CONSISTENT","NONE"],
+  correct:"allow",reason:"The fictional case includes the stated valid work authorization."
+ },
+ {
+  name:"Maria Santos",country:"Brazil",flag:"🇧🇷",age:31,face:"👩🏽",
+  passport:"Passport reported lost",visa:"Visitor visa details unverified",
+  purpose:"Tourism",stay:"Unknown",
+  quote:"I cannot locate my passport. I have a photograph of it on my phone.",
+  checks:["FLAG","FLAG","UNCLEAR","SECONDARY"],
+  correct:"deny",reason:"The scenario requires further verification of identity and travel documents."
+ },
+ {
+  name:"Robert Miller",country:"United States",flag:"🇺🇸",age:42,face:"👨🏻",
+  passport:"Valid U.S. passport",visa:"U.S. citizen",
+  purpose:"Returning home",stay:"Permanent",
+  quote:"I am a U.S. citizen returning home from a trip abroad.",
+  checks:["PASS","PASS","CONSISTENT","NONE"],
+  correct:"allow",reason:"In this scenario, the traveler establishes U.S. citizenship."
+ },
+ {
+  name:"Olena Kovalenko",country:"Ukraine",flag:"🇺🇦",age:37,face:"👩🏼",
+  passport:"Valid Ukrainian passport",visa:"Required authorization not presented",
+  purpose:"Business meeting",stay:"5 days",
+  quote:"I am here for a business meeting, but I may have brought the wrong paperwork.",
+  checks:["PASS","FLAG","CONSISTENT","VERIFY"],
+  correct:"deny",reason:"The fictional case lacks the required authorization for the stated travel."
+ }
+];
+
+const events = [
+ ["📡","SUPERVISOR REVIEW","A supervisor requests a review of the case file.","The inspection is added to the internal log."],
+ ["📰","BREAKING NEWS","A fictional political controversy is dominating the news cycle.","Public attention to border policy increases."],
+ ["💰","BUDGET CONTROVERSY","A satirical headline reads: “5 BILLION TO IRAN?”","The communications office requests clarification."],
+ ["🚨","SECONDARY INSPECTION","An officer requests additional document verification.","The next case will arrive after the review."],
+ ["🎙","PRESS BRIEFING","Reporters ask about the administration's latest border decision.","A statement is requested from the press office."]
+];
+
+let currentCase;
+let casesSeen=0, allowed=0, denied=0, score=0;
+let locked=false, soundOn=true, audioCtx=null;
+
+function playTone(freq=440,duration=.15,type="sine"){
+ if(!soundOn)return;
+ try{
+  audioCtx ||= new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==="suspended")audioCtx.resume();
+  const oscillator=audioCtx.createOscillator();
+  const gain=audioCtx.createGain();
+  oscillator.type=type;
+  oscillator.frequency.value=freq;
+  gain.gain.setValueAtTime(.09,audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);
+  oscillator.connect(gain);
+  gain.connect(audioCtx.destination);
+  oscillator.start();
+  oscillator.stop(audioCtx.currentTime+duration);
+ }catch(error){}
+}
+
+function shuffleCase(){
+ return cases[Math.floor(Math.random()*cases.length)];
+}
+
+function setCheck(id,value){
+ const element=document.getElementById(id);
+ element.textContent=value;
+ element.style.color =
+  ["PASS","CONSISTENT","NONE"].includes(value) ? "#83d8ad" :
+  ["FLAG","UNCLEAR","SECONDARY","VERIFY"].includes(value) ? "#ffce82" :
+  "#e5eaf0";
+}
+
+function addLog(message){
+ const log=document.getElementById("log");
+ const entry=document.createElement("div");
+ entry.className="logentry";
+ const time=new Date().toLocaleTimeString([],{
+  hour:"2-digit",minute:"2-digit"
+ });
+ entry.textContent=time+" — "+message;
+ log.prepend(entry);
+ while(log.children.length>12)log.lastChild.remove();
+}
+
+function updateStats(){
+ document.getElementById("sCases").textContent=casesSeen;
+ document.getElementById("sAllowed").textContent=allowed;
+ document.getElementById("sDenied").textContent=denied;
+ document.getElementById("sScore").textContent=score;
+}
+
+function newCase(){
+ currentCase=shuffleCase();
+ locked=false;
+ const c=currentCase;
+ document.getElementById("face").textContent=c.face;
+ document.getElementById("sceneName").textContent=c.name.toUpperCase();
+ document.getElementById("personName").textContent=c.name;
+ document.getElementById("personSub").textContent=c.flag+" "+c.country+" · AGE "+c.age;
+ document.getElementById("nationality").textContent=c.country;
+ document.getElementById("age").textContent=c.age;
+ document.getElementById("passport").textContent=c.passport;
+ document.getElementById("visa").textContent=c.visa;
+ document.getElementById("purpose").textContent=c.purpose;
+ document.getElementById("stay").textContent=c.stay;
+ document.getElementById("quote").textContent='"'+c.quote+'"';
+ document.getElementById("caseNo").textContent=
+  "CASE #"+String(casesSeen+1).padStart(4,"0");
+ setCheck("cPassport",c.checks[0]);
+ setCheck("cVisa",c.checks[1]);
+ setCheck("cPurpose",c.checks[2]);
+ setCheck("cReview",c.checks[3]);
+ document.getElementById("toast").textContent="";
+ document.getElementById("allowBtn").disabled=false;
+ document.getElementById("denyBtn").disabled=false;
+}
+
+function makeDecision(choice){
+ if(locked)return;
+ locked=true;
+ document.getElementById("allowBtn").disabled=true;
+ document.getElementById("denyBtn").disabled=true;
+ casesSeen++;
+ const correct=choice===currentCase.correct;
+ if(choice==="allow")allowed++;
+ else denied++;
+ if(correct){
+  score+=100;
+  playTone(660,.18);
+  document.getElementById("toast").textContent="CASE DECISION MATCHES THE SIMULATION RULES · +100";
+  addLog("Case "+currentCase.name+": decision recorded.");
+ }else{
+  score-=50;
+  playTone(170,.4,"triangle");
+  document.getElementById("toast").textContent="REVIEW: decision conflicts with the scenario's document findings · -50";
+  addLog("Case "+currentCase.name+": decision flagged for review.");
+ }
+ updateStats();
+ setTimeout(showEvent,500);
+}
+
+function showEvent(){
+ const event=events[Math.floor(Math.random()*events.length)];
+ document.getElementById("eventIcon").textContent=event[0];
+ document.getElementById("eventTitle").textContent=event[1];
+ document.getElementById("eventText").textContent=event[2];
+ document.getElementById("eventEffect").textContent=
+  event[3]+" Case note: "+currentCase.reason;
+ document.getElementById("overlay").style.display="flex";
+ playTone(280,.15,"square");
+ setTimeout(()=>playTone(380,.18,"sine"),180);
+}
+
+function continueGame(){
+ document.getElementById("overlay").style.display="none";
+ addLog("Inspection complete. Preparing next traveler.");
+ newCase();
+}
+
+document.getElementById("allowBtn").addEventListener("click",()=>makeDecision("allow"));
+document.getElementById("denyBtn").addEventListener("click",()=>makeDecision("deny"));
+document.getElementById("continueBtn").addEventListener("click",continueGame);
+
+document.getElementById("soundBtn").addEventListener("click",()=>{
+ soundOn=!soundOn;
+ document.getElementById("soundBtn").textContent=
+  "SOUND: "+(soundOn?"ON":"OFF");
+ if(soundOn)playTone(520,.12);
+});
+
+document.getElementById("restartBtn").addEventListener("click",()=>{
+ casesSeen=0;allowed=0;denied=0;score=0;
+ locked=false;
+ document.getElementById("overlay").style.display="none";
+ document.getElementById("log").innerHTML="";
+ addLog("Simulation restarted.");
+ updateStats();
+ newCase();
+});
+
+updateStats();
+newCase();
+</script>
+</body>
+</html>

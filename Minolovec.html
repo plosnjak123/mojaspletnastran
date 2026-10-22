@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<div style="background-color: white; padding: 15px; text-align: center;">
+    <a href="index.html" style="margin: 15px;">DOMOV</a>
+    <a href="osradlje.html" style="margin: 15px;">O OŠ RADLJE</a>
+    <a href="maskota.html" style="margin: 15px;">MASKOTA OŠ RADLJE</a>
+    <a href="dejavnosti.html" style="margin: 15px;">DEJAVNOSTI</a>
+    <a href="hobiji.html" style="margin: 15px;">MOJI HOBIJI</a>
+    <a href="Minolovec.html" style="margin: 15px;">IGRAJ MINOLOVEC</a>
+</div>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Minolovec</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 30px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        #info {
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        #game {
+            display: grid;
+            grid-template-columns: repeat(10, 40px);
+            grid-template-rows: repeat(10, 40px);
+            gap: 2px;
+            justify-content: center;
+            margin: auto;
+        }
+
+        .cell {
+            width: 40px;
+            height: 40px;
+            background-color: #777;
+            border: 2px solid #aaa;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .cell:hover {
+            background-color: #999;
+        }
+
+        .revealed {
+            background-color: #ddd;
+            color: black;
+            border: 1px solid #aaa;
+            cursor: default;
+        }
+
+        .mine {
+            background-color: red;
+        }
+
+        .flag {
+            background-color: orange;
+        }
+
+        .number1 {
+            color: blue;
+        }
+
+        .number2 {
+            color: green;
+        }
+
+        .number3 {
+            color: red;
+        }
+
+        .number4 {
+            color: darkblue;
+        }
+
+        #message {
+            font-size: 24px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>💣 Minolovec 💣</h1>
+
+    <div id="info">
+        Mine: <span id="mineCount">15</span>
+    </div>
+
+    <button onclick="startGame()">Nova igra</button>
+
+    <div id="game"></div>
+
+    <div id="message"></div>
+
+    <script>
+
+        const rows = 10;
+        const cols = 10;
+        const mines = 15;
+
+        let board = [];
+        let gameOver = false;
+        let flags = 0;
+
+        function startGame() {
+
+            gameOver = false;
+            flags = 0;
+
+            document.getElementById("message").textContent = "";
+            document.getElementById("mineCount").textContent = mines;
+
+            board = [];
+
+            // Ustvarimo prazno igralno polje
+            for (let r = 0; r < rows; r++) {
+
+                board[r] = [];
+
+                for (let c = 0; c < cols; c++) {
+
+                    board[r][c] = {
+                        mine: false,
+                        revealed: false,
+                        flag: false,
+                        number: 0
+                    };
+                }
+            }
+
+            // Naključno postavimo mine
+            let placedMines = 0;
+
+            while (placedMines < mines) {
+
+                let r = Math.floor(Math.random() * rows);
+                let c = Math.floor(Math.random() * cols);
+
+                if (!board[r][c].mine) {
+                    board[r][c].mine = true;
+                    placedMines++;
+                }
+            }
+
+            // Izračunamo število min okoli vsake celice
+            for (let r = 0; r < rows; r++) {
+
+                for (let c = 0; c < cols; c++) {
+
+                    if (!board[r][c].mine) {
+
+                        board[r][c].number = countMines(r, c);
+
+                    }
+                }
+            }
+
+            drawBoard();
+        }
+
+
+        function countMines(row, col) {
+
+            let count = 0;
+
+            for (let r = row - 1; r <= row + 1; r++) {
+
+                for (let c = col - 1; c <= col + 1; c++) {
+
+                    if (
+                        r >= 0 &&
+                        r < rows &&
+                        c >= 0 &&
+                        c < cols &&
+                        board[r][c].mine
+                    ) {
+                        count++;
+                    }
+                }
+            }
+
+            return count;
+        }
+
+
+        function drawBoard() {
+
+            const game = document.getElementById("game");
+
+            game.innerHTML = "";
+
+            for (let r = 0; r < rows; r++) {
+
+                for (let c = 0; c < cols; c++) {
+
+                    const cell = document.createElement("div");
+
+                    cell.classList.add("cell");
+
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+
+                    cell.addEventListener("click", function () {
+                        revealCell(r, c);
+                    });
+
+                    cell.addEventListener("contextmenu", function (event) {
+
+                        event.preventDefault();
+
+                        toggleFlag(r, c);
+
+                    });
+
+                    game.appendChild(cell);
+                }
+            }
+        }
+
+
+        function revealCell(row, col) {
+
+            if (gameOver) return;
+
+            const cell = board[row][col];
+
+            if (cell.revealed || cell.flag) return;
+
+            cell.revealed = true;
+
+            const element = getElement(row, col);
+
+            element.classList.add("revealed");
+
+            // Če je mina
+            if (cell.mine) {
+
+                element.textContent = "💣";
+                element.classList.add("mine");
+
+                gameOver = true;
+
+                showAllMines();
+
+                document.getElementById("message").textContent =
+                    "💥 Konec igre! Klikni »Nova igra«.";
+
+                return;
+            }
+
+            // Če ima celica številko
+            if (cell.number > 0) {
+
+                element.textContent = cell.number;
+
+                element.classList.add("number" + cell.number);
+
+            } else {
+
+                // Če ni min v bližini, odpremo sosednje celice
+                for (let r = row - 1; r <= row + 1; r++) {
+
+                    for (let c = col - 1; c <= col + 1; c++) {
+
+                        if (
+                            r >= 0 &&
+                            r < rows &&
+                            c >= 0 &&
+                            c < cols
+                        ) {
+                            revealCell(r, c);
+                        }
+                    }
+                }
+            }
+
+            checkWin();
+        }
+
+
+        function toggleFlag(row, col) {
+
+            if (gameOver) return;
+
+            const cell = board[row][col];
+
+            if (cell.revealed) return;
+
+            const element = getElement(row, col);
+
+            if (cell.flag) {
+
+                cell.flag = false;
+
+                flags--;
+
+                element.textContent = "";
+
+                element.classList.remove("flag");
+
+            } else {
+
+                if (flags >= mines) return;
+
+                cell.flag = true;
+
+                flags++;
+
+                element.textContent = "🚩";
+
+                element.classList.add("flag");
+            }
+
+            document.getElementById("mineCount").textContent =
+                mines - flags;
+        }
+
+
+        function getElement(row, col) {
+
+            return document.querySelector(
+                `[data-row="${row}"][data-col="${col}"]`
+            );
+        }
+
+
+        function showAllMines() {
+
+            for (let r = 0; r < rows; r++) {
+
+                for (let c = 0; c < cols; c++) {
+
+                    if (board[r][c].mine) {
+
+                        const element = getElement(r, c);
+
+                        element.textContent = "💣";
+                        element.classList.add("mine");
+
+                    }
+                }
+            }
+        }
+
+
+        function checkWin() {
+
+            let safeCells = 0;
+
+            for (let r = 0; r < rows; r++) {
+
+                for (let c = 0; c < cols; c++) {
+
+                    if (
+                        !board[r][c].mine &&
+                        board[r][c].revealed
+                    ) {
+                        safeCells++;
+                    }
+                }
+            }
+
+            if (safeCells === rows * cols - mines) {
+
+                gameOver = true;
+
+                document.getElementById("message").textContent =
+                    "🎉 Čestitke! Zmagal si!";
+            }
+        }
+
+
+        // Zaženemo prvo igro
+        startGame();
+
+    </script>
+
+</body>
+</html>

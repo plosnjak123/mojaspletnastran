@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jakob Plošnik | Domov</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Arial,sans-serif;background:#081321;color:#f1f5ff;line-height:1.6}
+a{color:inherit;text-decoration:none}
+.container{width:90%;max-width:1150px;margin:auto}
+header{background:#0b1729;border-bottom:1px solid #263b55;position:sticky;top:0;z-index:10}
+nav{display:flex;justify-content:space-between;align-items:center;padding:20px 0;gap:20px}
+.logo{font-size:23px;font-weight:bold}
+.logo span,h1 span{color:#55aaff}
+.links{display:flex;gap:18px;flex-wrap:wrap}
+.links a{color:#b9c9df;font-size:14px}
+.links a:hover{color:#70e1f5}
+.hero{padding:100px 0;background:linear-gradient(90deg,#081321ed,#08132180),url("https://cdn.4travel.jp/img/thumbnails/imk/travelogue_pict/57/87/22/650x_57872200.jpg") center/cover}
+.hero h1{font-size:clamp(38px,6vw,65px);line-height:1.15;margin:20px 0}
+.hero p,.content p{color:#c3cee0;max-width:650px;margin-bottom:25px}
+.btn{display:inline-block;background:#2585e8;padding:12px 20px;border-radius:9px;font-weight:bold}
+.btn:hover{background:#55aaff}
+.info{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:-25px}
+.card{background:#111f30;border:1px solid #263b55;border-radius:15px;padding:22px}
+.card h3{margin-bottom:5px}
+.card p{color:#aabbd2;font-size:14px}
+section{padding:75px 0}
+h2{font-size:clamp(28px,4vw,42px);margin-bottom:20px}
+.label{color:#70e1f5;text-transform:uppercase;letter-spacing:2px;font-size:12px;font-weight:bold}
+.hobby{display:grid;grid-template-columns:1fr 1fr;gap:35px;align-items:center}
+.hobby img{width:100%;height:350px;object-fit:cover;border-radius:18px}
+.points{margin:20px 0;color:#c3cee0}
+.points li{margin:10px 0}
+.destination{background:linear-gradient(90deg,#081321ed,#08132180),url("https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=1400&q=80") center/cover;border:1px solid #263b55;border-radius:18px;padding:35px}
+footer{border-top:1px solid #263b55;padding:25px 0;color:#aabbd2;font-size:14px}
+footer .container{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
+@media(max-width:750px){
+nav{align-items:flex-start;flex-direction:column}
+.links{gap:12px}
+.info,.hobby{grid-template-columns:1fr}
+.hero{padding:75px 0}
+section{padding:50px 0}
+.hobby img{height:260px}
+}
+</style>
+</head>
+
+<body id="top">
+<header>
+<div class="container">
+<nav>
+<a class="logo" href="index.html">JAKOB<span>.</span></a>
+<div class="links">
+<a href="index.html">DOMOV</a>
+<a href="osradlje.html">O ŠOLI</a>
+<a href="maskota.html">MASKOTA</a>
+<a href="dejavnosti.html">DEJAVNOSTI</a>
+<a href="hobiji.html">MOJI HOBIJI</a>
+<a href="trumpsim.html">IGRAJ IGRO</a>
+</div>
+</nav>
+</div>
+</header>
+
+<main>
+<section class="hero">
+<div class="container">
+<span class="label">Moja osebna spletna stran</span>
+<h1>Živjo, sem<br>Jakob <span>Plošnik.</span></h1>
+<p>Dobrodošel na moji spletni strani! Tukaj lahko spoznaš moje hobije, mojo šolo in druge zanimivosti. Razišči stran in odkrij, kaj me zanima.</p>
+<a class="btn" href="#hobi">ODKRIJ MOJ HOBI →</a>
+</div>
+</section>
+
+<div class="container">
+<div class="info">
+<div class="card"><h3>Smučanje</h3><p>Moj najljubši zimski hobi.</p></div>
+<div class="card"><h3>OŠ Radlje ob Dravi</h3><p>Moja šola.</p></div>
+<div class="card"><h3>Raziskovanje</h3><p>Gore, narava in nova doživetja.</p></div>
+</div>
+</div>
+
+<section id="hobi">
+<div class="container hobby">
+<img src="https://cdn.4travel.jp/img/thumbnails/imk/travelogue_pict/57/87/22/650x_57872200.jpg" alt="Zimska pokrajina">
+<div class="content">
+<span class="label">Kaj rad počnem?</span>
+<h2>Smučanje je moj najljubši hobi.</h2>
+<p>Rad smučam, ker je to zabaven šport, pri katerem lahko uživam v hitrosti in čudoviti naravi. Najraje smučam po urejenih progah v gorah.</p>
+<ul class="points">
+<li>Urejene smučarske proge</li>
+<li>Čudoviti gorski razgledi</li>
+<li>Čas z družino in prijatelji</li>
+</ul>
+<a class="btn" href="https://www.bergfex.com/" target="_blank">RAZIŠČI SMUČIŠČA →</a>
+</div>
+</div>
+</section>
+
+<section>
+<div class="container">
+<div class="destination">
+<span class="label">Moja sanjska destinacija</span>
+<h2>Zermatt, Švica</h2>
+<p>Eden izmed krajev, kjer bi rad smučal, je Zermatt v Švici. Znan je po mogočni gori Matterhorn, čudovitih razgledih in odličnih smučarskih progah.</p>
+<a class="btn" href="https://www.zermatt.ch/" target="_blank">SPOZNAJ ZERMATT →</a>
+</div>
+</div>
+</section>
+</main>
+
+<footer>
+<div class="container">
+<p>© <span id="year"></span> Jakob Plošnik. Moja osebna spletna stran.</p>
+<a href="#top">NA VRH ↑</a>
+</div>
+</footer>
+
+<script>
+document.getElementById("year").textContent=new Date().getFullYear();
+</script>
+</body>
+</html>
